@@ -20,7 +20,8 @@ class FourierTransformer(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         X = X.reshape(X.shape[0], 24, 2048)
-        F = fft(X, axis=2)
+        F = FourierTransformer.power(fft(X, axis=2))
+
         if self.aggregate == 'median':
             F_byclass = self.get_perclass_values(F, y)
             topk_byclass = [np.median(F_y, axis=0).argsort(axis=1)[:,-self.k:] for F_y in F_byclass]
