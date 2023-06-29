@@ -4,7 +4,14 @@ import pandas as pd
 from numpy.fft import fft, ifft, fftfreq
 
 
-
+'''
+    @param k: how many top features we want to consider for each region, class and (maybe) samples
+    @param aggregate: different ways to aggregate the top k results:
+        - median: 
+        - union:
+        - intersection:
+        - exclusive:
+'''
 
 class FourierTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, k=10, aggregate='union'):
