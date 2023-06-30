@@ -22,7 +22,7 @@ class FourierTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X, y=None):
         if self.aggregate == 'low_filter':
             # assert type(self.k) == list, 'When predefined k must be the frequency list!'
-            self.freq_idx = list(range(self.k))
+            self.freq_idx = [list(range(self.k)) for _ in range(24)]
             return self
 
         X = X.reshape(X.shape[0], 24, 2048)
@@ -60,7 +60,6 @@ class FourierTransformer(BaseEstimator, TransformerMixin):
 
         X = X.reshape(X.shape[0], 24, 2048)
         M = FourierTransformer.fourier_magnitude(X, axis=2)
-        print([M[:,i,idx].shape for i,idx in enumerate(self.freq_idx)])
         return np.hstack([M[:,i,idx] for i,idx in enumerate(self.freq_idx)])
     
     @staticmethod
