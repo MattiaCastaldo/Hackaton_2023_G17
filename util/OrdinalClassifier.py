@@ -1,6 +1,7 @@
 from sklearn.base import BaseEstimator
 import numpy as np
 from sklearn.base import clone
+
 class OrdinalClassifier(BaseEstimator):
   """
   Helper class that solves ordinal classification (classes that have an order to them eg cold,warm,hot)
@@ -18,21 +19,26 @@ class OrdinalClassifier(BaseEstimator):
   def fit(self,X,y,**fit):
     self.X = X
     self.y = y
-    no_of_classifiers = np.max(self.y) #since y starts from 0
+    no_of_classifiers = np.max(self.y)-1 #since y starts from 1
     self.classes_ = list(range(no_of_classifiers+1))
     if isinstance(self.clf_args,list):
       #for pipelines
-      c = self.classifier(self.clf_args)
+      c = clone(self.classifier)
+      c.set_params(**self.clf_args)
     elif isinstance(self.clf_args,dict):
       #for normal estimators
-       c = self.classifier(**self.clf_args)
-    for i in range(no_of_classifiers):
+      c = clone(self.classifier)
+      c.set_params(**self.clf_args)
+      
+
+    for i in range(1,no_of_classifiers):
       # make a copy of y because we want to change the values of y
       copy_y = np.copy(self.y)
       # make a binary classification here
       copy_y[copy_y<=i] = 0
       copy_y[copy_y>i] = 1
-      classifier = clone(c)
+      classifier = clone(self.classifier)
+
       classifier.fit(self.X,copy_y,**fit)
       self.clfs.append(classifier)
     return self
@@ -54,7 +60,7 @@ class OrdinalClassifier(BaseEstimator):
     return answer
   def predict(self,test):
     self.predict_proba(test)
-    return np.argmax(self.final_prob,axis=1)
+    return np.argmax(self.final_prob,axis=1)+1
   # def score(self,X,y,sample_weight=None):
   #   from sklearn.metrics import accuracy_score
   #   return accuracy_score(y, self.predict(X), sample_weight=sample_weight)

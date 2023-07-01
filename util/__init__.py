@@ -4,4 +4,4 @@ from .plots import *
 from .FourierTransformer import *
 from .OrdinalClassifier import *
 
-from.eldritch_horror import tres
+from .eldritch_horror import tres_idx
